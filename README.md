@@ -54,6 +54,8 @@ For staging the data two simple tables that match the schema of the input files 
 
 ### Fact and dimension tables
 
+For analysis purposes, fact and dimension tables are created and populated using data from the staging tables.
+
 The fact table will contain song plays, since this is what we want to query and aggregate:
 
 **songplays (DISTSTYLE KEY)**
@@ -143,8 +145,8 @@ The first step of the pipeline is importing data from the two sets of JSON files
 
 The second step of the ETL pipeline is importing data from the staging tables into the fact and dimension tables.
 
-* **Song plays** are imported from the event table. Unfortunately there are no song IDs or artist IDs in the event table but only song titles and artist names. For this reason we have to `JOIN` into the song table to find a matching song using the song title and artist name. I use a `LEFT JOIN` and leave `song_id` and `artist_id` empty in the fact table for missing songs. In the same process the integer timestamp from the staging table is converted into a Redshift `TIMESTAMP`. This is possible, using the `DATE_ADD` SQL function and the reference date of `1970/01/01` along with the given timestamp which represents milliseconds since the reference date.
-* **Users** are imported the event table, ignoring duplicates.
+* **Song plays** are imported from the event table. Unfortunately there are no song IDs or artist IDs in the event table but only song titles and artist names. For this reason we have to `JOIN` into the song table to find a matching song using the song title and artist name. I use a `LEFT JOIN` and leave `song_id` and `artist_id` empty in the fact table for missing songs. In the same process the integer timestamp from the staging table is converted into a Redshift `TIMESTAMP`. This is possible using the `DATE_ADD` SQL function and the reference date of `1970/01/01` along with the given timestamp which represents milliseconds since the reference date.
+* **Users** are imported from the event table, ignoring duplicates.
 * **Songs** are imported directly from the song staging table.
 * **Artists** are imported from the song staging table, ignoring duplicates.
 * **Time** table is imported using the timestamps from the event staging table, and using SQL functions to extract time components (hour, day, week etc.).
